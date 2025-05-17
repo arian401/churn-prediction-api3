@@ -3,17 +3,24 @@
 FastAPI endpoint for customer-churn prediction.
 Expects 11 numeric features (preferred_device was removed).
 """
-
+import os
+from huggingface_hub import hf_hub_download
+import joblib, json, pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import joblib, json, pandas as pd
-from huggingface_hub import hf_hub_download
 
-# --------------------------------------------------------------
-# Load artefacts
-# --------------------------------------------------------------
-model_path  = hf_hub_download(repo_id="Arian401/churn-model", filename="churn_model.pkl")
-scaler_path = hf_hub_download(repo_id="Arian401/churn-model", filename="scaler.pkl")
+CACHE_DIR = "/data/.hf_cache"      # writable in Spaces
+
+model_path = hf_hub_download(
+    repo_id="Arian401/churn-model",
+    filename="churn_model.pkl",
+    cache_dir=CACHE_DIR
+)
+scaler_path = hf_hub_download(
+    repo_id="Arian401/churn-model",
+    filename="scaler.pkl",
+    cache_dir=CACHE_DIR
+)
 
 model  = joblib.load(model_path)
 scaler = joblib.load(scaler_path)
